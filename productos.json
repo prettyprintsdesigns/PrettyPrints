@@ -1,0 +1,35 @@
+[
+  {
+    "id": "plantilla-dieline-caja-regalo",
+    "name": "Plantilla Dieline Caja Regalo",
+    "price": 12.00,
+    "category": "cajas",
+    "images": [
+      "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    "id": "agenda-minimalista-imprimible",
+    "name": "Agenda Minimalista Imprimible",
+    "price": 15.50,
+    "category": "agendas",
+    "images": [
+      "https://images.unsplash.com/photo-1522199755839-a2bacb67c546?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    "id": "libro-colorear-infantil",
+    "name": "Libro para Colorear Infantil",
+    "price": 9.99,
+    "category": "libros",
+    "images": [
+      "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?auto=format&fit=crop&w=400&q=80"
+    ]
+  }
+]

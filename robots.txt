@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Cambia la URL por la de tu web publicada
+Sitemap: https://TU-USUARIO.github.io/TU-REPOSITORIO/sitemap.xml
