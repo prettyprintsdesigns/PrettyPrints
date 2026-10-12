@@ -39,7 +39,7 @@
         var grid = $('#product-grid');
         if (!grid) return;
 
-        var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw4F8R5LXkfsxhn4dDpJXNDC9ztlHoNnHRRlsf8APKIunPKi8G8VhqJcPx8EG4u3CB7/exec';
+        var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxFt4gvymNgtpweXgpAemAOfbIJP0twlqIMNCFr0flGbLVenwRi9YuuLPcjbjxHclAgbQ/exec';
 
         fetch(WEB_APP_URL)
             .then(function (res) {
