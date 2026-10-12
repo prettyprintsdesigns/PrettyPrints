@@ -39,7 +39,7 @@
         var grid = $('#product-grid');
         if (!grid) return;
 
-        var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwQi1yOcvdssyFh9TFRWItHyOAd5j1z6LUDAKf1PBr3pZbHymWBtNdy3vEqKRshYg7_9A/exec?action=getProducts';
+        var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzU4qwqIsMf77-oOwu2ZAYhxrKTxMseFkVR9GlMgi8E5nqHg8a2_4a3oarE7RCtXnmN1A/exec?action=getProducts';
 
         fetch(WEB_APP_URL)
             .then(function (res) {
@@ -500,7 +500,7 @@
             writeJSON(ORDER_KEY, order);
 
             // ENVÍO DE DATOS A GOOGLE SHEETS
-            var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwQi1yOcvdssyFh9TFRWItHyOAd5j1z6LUDAKf1PBr3pZbHymWBtNdy3vEqKRshYg7_9A/exec';
+            var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzU4qwqIsMf77-oOwu2ZAYhxrKTxMseFkVR9GlMgi8E5nqHg8a2_4a3oarE7RCtXnmN1A/exec';
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
