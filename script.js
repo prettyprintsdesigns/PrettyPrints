@@ -34,12 +34,24 @@
         });
     }
 
+    /* ---------- Respaldo de imágenes de Drive ---------- */
+    function attachImageFallback(img) {
+        img.addEventListener('error', function onErr() {
+            img.removeEventListener('error', onErr);
+            var m = (img.getAttribute('src') || '').match(/\/d\/([\w-]+)/);
+            if (m) img.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1080';
+            else img.classList.add('img-error');
+        });
+    }
+
     /* ---------- Carga de productos desde Google Sheets en tiempo real ---------- */
     function loadProducts() {
         var grid = $('#product-grid');
         if (!grid) return;
 
         var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzU4qwqIsMf77-oOwu2ZAYhxrKTxMseFkVR9GlMgi8E5nqHg8a2_4a3oarE7RCtXnmN1A/exec?action=getProducts';
+
+        grid.innerHTML = '<p class="empty-msg">Cargando plantillas…</p>';
 
         fetch(WEB_APP_URL)
             .then(function (res) {
@@ -59,7 +71,7 @@
                     }).join('');
 
                     var imagesHtml = (p.images || []).map(function (img, idx) {
-                        return '<img src="' + esc(img) + '" alt="' + esc(p.name) + ', imagen ' + (idx + 1) + ' de ' + p.images.length + '" loading="lazy">';
+                        return '<img src="' + esc(img) + '" alt="' + esc(p.name) + ', imagen ' + (idx + 1) + ' de ' + p.images.length + '" width="1080" height="1080" decoding="async" referrerpolicy="no-referrer"' + (idx === 0 ? '' : ' loading="lazy"') + '>';
                     }).join('');
 
                     var dotsHtml = (p.images || []).map(function (_, idx) {
@@ -67,7 +79,7 @@
                     }).join('');
 
                     return '<article class="project-item" data-category="' + esc(p.category) + '" data-id="' + esc(p.id) + '" data-price="' + p.price + '">' +
-                        '<div class="slider" role="group" aria-roledescription="carrusel" aria-label="Imágenes de ' + esc(p.name) + '">' +
+                        '<div class="slider' + ((p.images || []).length < 2 ? ' is-single' : '') + '" role="group" aria-roledescription="carrusel" aria-label="Imágenes de ' + esc(p.name) + '">' +
                             '<div class="slides" tabindex="0">' + imagesHtml + '</div>' +
                             '<button class="slider-btn prev" type="button" aria-label="Imagen anterior"><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>' +
                             '<button class="slider-btn next" type="button" aria-label="Imagen siguiente"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
@@ -84,6 +96,7 @@
 
                 // Inicializar carruseles y filtros después de pintar
                 $$('.slider', grid).forEach(initSlider);
+                $$('.slides img', grid).forEach(attachImageFallback);
                 applyFilter();
             })
             .catch(function (err) {
@@ -504,7 +517,7 @@
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(order)
             }).catch(function (err) {
                 console.error('Error al registrar pedido en Google Sheets', err);
@@ -563,9 +576,6 @@
             render();
         });
     }
-
-    render();
-})();
 
     render();
 })();
