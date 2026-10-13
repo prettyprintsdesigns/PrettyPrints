@@ -1317,3 +1317,72 @@ dialog.legal::backdrop {
     text-decoration: underline;
     text-underline-offset: 3px;
 }
+
+/* =====================================================================
+   Tarjetas de producto uniformes · imágenes cuadradas (1080x1080)
+   Este bloque va al final para sobrescribir las reglas anteriores.
+   ===================================================================== */
+
+/* Columnas de ancho fijo y centradas: una tarjeta sola ya no se estira */
+.project-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 300px));
+    justify-content: center;
+    align-items: stretch;
+}
+
+.project-grid .empty-msg {
+    grid-column: 1 / -1;
+    text-align: center;
+}
+
+.project-item {
+    min-width: 0;
+    justify-content: flex-start;
+}
+
+/* Marco cuadrado: todas las imágenes miden igual en todas las tarjetas */
+.project-item .slider {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--blue-soft);   /* color mientras carga la imagen */
+}
+
+.project-item .slides {
+    width: 100%;
+    height: 100%;
+    overflow-y: hidden;
+}
+
+.project-item .slides img {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;              /* recorta al centro si no es cuadrada */
+    display: block;
+}
+
+/* Un solo archivo: sin flechas ni puntos */
+.slider.is-single .slider-btn,
+.slider.is-single .dots {
+    display: none;
+}
+
+/* Altura homogénea del texto; el botón siempre queda abajo */
+.project-item .product-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.project-item .product-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.6em;
+    line-height: 1.3;
+}
+
+.project-item .buy-btn {
+    margin-top: auto;
+}
