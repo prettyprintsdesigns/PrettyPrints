@@ -282,14 +282,34 @@ header nav a:hover {
 }
 
 .filter-container {
+    /* Una sola línea, deslizable y fija bajo el encabezado */
+    position: sticky;
+    top: var(--header-h, 70px);
+    z-index: 900;
     display: flex;
-    justify-content: center;
+    flex-wrap: nowrap;
     gap: 12px;
-    flex-wrap: wrap;
-    margin: 25px 0 40px 0;
+    margin: 25px -20px 30px;
+    padding: 10px 20px;
+    background-color: var(--bg-cream);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
 }
 
+.filter-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Centrados si caben; si no caben, empiezan al borde y se deslizan */
+.filter-container .filter-btn:first-child { margin-left: auto; }
+.filter-container .filter-btn:last-child { margin-right: auto; }
+
 .filter-btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
     background-color: var(--white);
     border: 2px solid var(--pink-light);
     padding: 8px 18px;
