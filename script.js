@@ -1,259 +1,594 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pretty Prints | Plantillas digitales</title>
-    <meta name="description" content="Plantillas digitales listas para descargar e imprimir: planners, agendas, libros para colorear, packaging, recursos infantiles y juegos.">
-    <link rel="canonical" href="https://prettyprintsdesigns.github.io/PrettyPrints/">
-    <meta property="og:title" content="Pretty Prints | Plantillas digitales">
-    <meta property="og:description" content="Planners, agendas, libros para colorear, packaging, recursos infantiles y juegos listos para descargar e imprimir.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://prettyprintsdesigns.github.io/PrettyPrints/">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20240%20240%22%3E%3Ccircle%20cx=%22120%22%20cy=%22120%22%20r=%22110%22%20fill=%22%23FF94B8%22/%3E%3Cpath%20d=%22M0%2C0%20C46%2C-44%2082%2C-58%20128%2C-58%20A58%2C58%200%200%201%20128%2C58%20C82%2C58%2046%2C44%200%2C0%20Z%22%20transform=%22translate%28123.0%20122.4%29%20rotate%28-100%29%20scale%280.44%29%22%20fill=%22%23FDFBF7%22/%3E%3Cpath%20d=%22M0%2C0%20C46%2C-44%2082%2C-58%20128%2C-58%20A58%2C58%200%200%201%20128%2C58%20C82%2C58%2046%2C44%200%2C0%20Z%22%20transform=%22translate%28123.0%20122.4%29%20rotate%28-28%29%20scale%280.44%29%22%20fill=%22%23FDFBF7%22/%3E%3Cpath%20d=%22M0%2C0%20C46%2C-44%2082%2C-58%20128%2C-58%20A58%2C58%200%200%201%20128%2C58%20C82%2C58%2046%2C44%200%2C0%20Z%22%20transform=%22translate%28123.0%20122.4%29%20rotate%2844%29%20scale%280.44%29%22%20fill=%22%23FDFBF7%22/%3E%3Cpath%20d=%22M0%2C0%20C46%2C-44%2082%2C-58%20128%2C-58%20A58%2C58%200%200%201%20128%2C58%20C82%2C58%2046%2C44%200%2C0%20Z%22%20transform=%22translate%28123.0%20122.4%29%20rotate%28116%29%20scale%280.44%29%22%20fill=%22%23FDFBF7%22/%3E%3Cpath%20d=%22M0%2C0%20C46%2C-44%2082%2C-58%20128%2C-58%20A58%2C58%200%200%201%20128%2C58%20C82%2C58%2046%2C44%200%2C0%20Z%22%20transform=%22translate%28123.0%20122.4%29%20rotate%28188%29%20scale%280.44%29%22%20fill=%22%23FDFBF7%22/%3E%3C/svg%3E">
+/* Pretty Prints · interfaz (ventanas, carrusel, filtros) y bolsa de compras */
 
-    <!-- Google Fonts: Quicksand (texto), Shrikhand (títulos), Caveat (notas). Los iconos son SVG incluidos en esta página, sin dependencias externas. -->
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Quicksand:wght@400;600;700&family=Shrikhand&display=swap" rel="stylesheet">
+(function () {
+    var $ = function (s, r) { return (r || document).querySelector(s); };
+    var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    /* ---------- Deslizador de imágenes ---------- */
+    function initSlider(slider) {
+        var track = $('.slides', slider);
+        var total = $$('img', track).length;
+        var dots = $$('.dot', slider);
+        var prev = $('.prev', slider);
+        var next = $('.next', slider);
 
-    <!-- Iconos SVG -->
-    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-        <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><path d="M17.6 6.4h.01"/></symbol>
-        <symbol id="i-mail" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></symbol>
-        <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></symbol>
-        <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
-        <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
-        <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
-        <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
-    </svg>
+        if (!total || !prev || !next) return;
 
-    <!-- Header / Navbar -->
-    <header id="inicio">
-        <a class="brand" href="#inicio" aria-label="Pretty Prints, ir al inicio">
-            <svg class="brand-logo" width="151" height="46" viewBox="0 0 790 240" role="img" aria-label="Pretty Prints" focusable="false">
-                <circle cx="120" cy="120" r="110" fill="#FF94B8"/>
-                <path d="M0,0 C46,-44 82,-58 128,-58 A58,58 0 0 1 128,58 C82,58 46,44 0,0 Z" transform="translate(123.0 122.4) rotate(-100) scale(0.44)" fill="#FDFBF7"/>
-                <path d="M0,0 C46,-44 82,-58 128,-58 A58,58 0 0 1 128,58 C82,58 46,44 0,0 Z" transform="translate(123.0 122.4) rotate(-28) scale(0.44)" fill="#FDFBF7"/>
-                <path d="M0,0 C46,-44 82,-58 128,-58 A58,58 0 0 1 128,58 C82,58 46,44 0,0 Z" transform="translate(123.0 122.4) rotate(44) scale(0.44)" fill="#FDFBF7"/>
-                <path d="M0,0 C46,-44 82,-58 128,-58 A58,58 0 0 1 128,58 C82,58 46,44 0,0 Z" transform="translate(123.0 122.4) rotate(116) scale(0.44)" fill="#FDFBF7"/>
-                <path d="M0,0 C46,-44 82,-58 128,-58 A58,58 0 0 1 128,58 C82,58 46,44 0,0 Z" transform="translate(123.0 122.4) rotate(188) scale(0.44)" fill="#FDFBF7"/>
-                <g transform="translate(0 22)">
-                    <path d="M250.0 118.0V117.16Q253.024 117.16 254.872 115.312Q256.72 113.464 256.72 110.44V62.559999999999995Q256.72 59.535999999999994 254.872 57.687999999999995Q253.024 55.839999999999996 250.0 55.839999999999996V54.99999999999999H278.056Q284.524 55.083999999999996 289.35400000000004 57.226Q294.184 59.367999999999995 296.914 63.147999999999996Q299.644 66.928 299.644 72.05199999999999Q299.644 77.17599999999999 296.914 80.99799999999999Q294.184 84.82 289.18600000000004 86.96199999999999Q284.188 89.104 277.384 89.104H269.656V110.44Q269.656 113.464 271.504 115.312Q273.352 117.16 276.376 117.16H276.544V118.0ZM269.656 88.012H274.612Q278.224 88.012 280.87 85.95400000000001Q283.516 83.896 284.986 80.28399999999999Q286.456 76.672 286.456 72.05199999999999Q286.456 67.43199999999999 284.986 63.81999999999999Q283.516 60.208 280.828 58.15Q278.14 56.092 274.528 56.092H269.656ZM302.576 118.0V117.16H302.66Q305.684 117.16 307.53200000000004 115.312Q309.38 113.464 309.38 110.44V82.888Q309.38 79.696 308.078 77.932Q306.776 76.168 302.576 76.168V75.328H310.892Q315.344 75.328 317.61199999999997 74.446Q319.88 73.564 320.80400000000003 72.136H321.224L321.308 85.912Q322.4 83.392 324.12199999999996 80.62Q325.844 77.848 328.49 75.958Q331.136 74.068 334.832 74.068Q336.092 74.068 337.52 74.32Q338.948 74.572 340.544 75.244L337.26800000000003 85.072Q334.244 83.392 332.01800000000003 82.72Q329.79200000000003 82.048 328.112 82.048Q325.25600000000003 82.048 323.87 83.812Q322.484 85.576 321.476 88.012V110.44Q321.476 113.464 323.324 115.312Q325.172 117.16 328.196 117.16H328.28000000000003V118.0ZM363.72 119.008Q357.92400000000004 119.008 353.43000000000006 116.15199999999999Q348.93600000000004 113.29599999999999 346.41600000000005 108.214Q343.896 103.132 343.896 96.58Q343.896 89.86 346.668 84.82Q349.44 79.78 354.27 76.966Q359.1 74.15199999999999 365.232 74.15199999999999Q370.35600000000005 74.15199999999999 374.346 76.16799999999999Q378.336 78.184 380.73 81.838Q383.124 85.49199999999999 383.46000000000004 90.28L383.54400000000004 91.53999999999999H355.32000000000005V91.96Q355.32000000000005 100.864 359.26800000000003 106.19800000000001Q363.216 111.532 369.85200000000003 111.532Q373.884 111.532 377.538 109.55799999999999Q381.192 107.584 383.46000000000004 104.224L384.216 104.476Q382.788 108.76 379.764 112.036Q376.74 115.312 372.624 117.16Q368.50800000000004 119.008 363.72 119.008ZM355.404 90.28H372.456Q372.456 83.644 370.314 79.528Q368.172 75.412 364.30800000000005 75.412Q360.612 75.412 358.17600000000004 79.444Q355.74 83.476 355.404 90.28ZM405.46000000000004 119.176Q401.09200000000004 119.176 398.32000000000005 116.404Q395.548 113.632 395.548 109.18V76.84H388.408V75.74799999999999Q394.204 75.328 398.78200000000004 72.05199999999999Q403.36 68.776 406.3 63.232H407.644V75.328H418.81600000000003L417.97600000000006 76.84H407.644V107.332Q407.644 114.05199999999999 412.18 114.05199999999999Q413.692 114.05199999999999 415.66600000000005 113.12799999999999Q417.64000000000004 112.204 419.40400000000005 110.692V111.532Q416.632 115.06 412.852 117.118Q409.072 119.176 405.46000000000004 119.176ZM439.72400000000005 119.176Q435.35600000000005 119.176 432.58400000000006 116.404Q429.812 113.632 429.812 109.18V76.84H422.672V75.74799999999999Q428.468 75.328 433.04600000000005 72.05199999999999Q437.624 68.776 440.564 63.232H441.908V75.328H453.08000000000004L452.24000000000007 76.84H441.908V107.332Q441.908 114.05199999999999 446.444 114.05199999999999Q447.956 114.05199999999999 449.93000000000006 113.12799999999999Q451.90400000000005 112.204 453.66800000000006 110.692V111.532Q450.896 115.06 447.116 117.118Q443.336 119.176 439.72400000000005 119.176ZM456.76800000000003 136.816Q453.32400000000007 136.816 450.13200000000006 135.472L453.4080000000001 125.644Q455.50800000000004 126.484 457.98600000000005 127.072Q460.46400000000006 127.66 462.98400000000004 127.66Q466.17600000000004 127.66 468.99 126.358Q471.80400000000003 125.056 473.232 121.528L474.15600000000006 119.26L457.52400000000006 80.70400000000001Q456.684 78.68799999999999 455.298 77.47Q453.91200000000003 76.252 451.47600000000006 76.168V75.328H475.75200000000007V76.168Q473.48400000000004 76.41999999999999 472.2660000000001 77.764Q471.04800000000006 79.108 471.04800000000006 81.208Q471.04800000000006 83.056 471.88800000000003 84.988L480.37200000000007 104.896L488.85600000000005 84.988Q489.696 83.056 489.696 81.208Q489.696 79.108 488.47800000000007 77.764Q487.26000000000005 76.41999999999999 484.9080000000001 76.168V75.328H496.50000000000006V76.168Q494.56800000000004 76.588 493.22400000000005 78.646Q491.88000000000005 80.70400000000001 490.36800000000005 84.232L473.232 124.048Q470.54400000000004 130.264 466.26000000000005 133.54000000000002Q461.97600000000006 136.816 456.76800000000003 136.816Z" fill="#4A3B32"/>
-                    <path d="M514.224 118.0V117.16Q517.248 117.16 519.096 115.312Q520.9440000000001 113.464 520.9440000000001 110.44V62.559999999999995Q520.9440000000001 59.535999999999994 519.096 57.687999999999995Q517.248 55.839999999999996 514.224 55.839999999999996V54.99999999999999H542.2800000000001Q548.748 55.083999999999996 553.578 57.226Q558.408 59.367999999999995 561.138 63.147999999999996Q563.868 66.928 563.868 72.05199999999999Q563.868 77.17599999999999 561.138 80.99799999999999Q558.408 84.82 553.4100000000001 86.96199999999999Q548.412 89.104 541.6080000000001 89.104H533.88V110.44Q533.88 113.464 535.7280000000001 115.312Q537.576 117.16 540.6 117.16H540.768V118.0ZM533.88 88.012H538.836Q542.4480000000001 88.012 545.094 85.95400000000001Q547.74 83.896 549.21 80.28399999999999Q550.6800000000001 76.672 550.6800000000001 72.05199999999999Q550.6800000000001 67.43199999999999 549.21 63.81999999999999Q547.74 60.208 545.052 58.15Q542.364 56.092 538.7520000000001 56.092H533.88ZM566.8000000000001 118.0V117.16H566.884Q569.908 117.16 571.7560000000001 115.312Q573.604 113.464 573.604 110.44V82.888Q573.604 79.696 572.302 77.932Q571.0 76.168 566.8000000000001 76.168V75.328H575.1160000000001Q579.5680000000001 75.328 581.836 74.446Q584.104 73.564 585.028 72.136H585.4480000000001L585.532 85.912Q586.624 83.392 588.346 80.62Q590.0680000000001 77.848 592.714 75.958Q595.36 74.068 599.056 74.068Q600.316 74.068 601.744 74.32Q603.172 74.572 604.768 75.244L601.4920000000001 85.072Q598.4680000000001 83.392 596.2420000000001 82.72Q594.0160000000001 82.048 592.336 82.048Q589.48 82.048 588.094 83.812Q586.7080000000001 85.576 585.7 88.012V110.44Q585.7 113.464 587.548 115.312Q589.3960000000001 117.16 592.4200000000001 117.16H592.504V118.0ZM605.936 118.0V117.16H606.0200000000001Q609.0440000000001 117.16 610.892 115.312Q612.7400000000001 113.464 612.7400000000001 110.44V82.888Q612.7400000000001 79.696 611.4380000000001 77.932Q610.1360000000001 76.168 605.936 76.168V75.328H614.504Q618.7880000000001 75.328 621.056 74.404Q623.1560000000001 73.47999999999999 623.9960000000001 72.136H624.836V110.44Q624.836 113.464 626.684 115.312Q628.532 117.16 631.556 117.16H631.6400000000001V118.0ZM618.7040000000001 66.844Q615.6800000000001 66.844 613.706 64.86999999999999Q611.732 62.895999999999994 611.732 59.872Q611.732 56.848 613.706 54.873999999999995Q615.6800000000001 52.89999999999999 618.7040000000001 52.89999999999999Q621.644 52.89999999999999 623.6179999999999 54.916Q625.592 56.931999999999995 625.592 59.872Q625.592 62.812 623.6179999999999 64.828Q621.644 66.844 618.7040000000001 66.844ZM631.8000000000001 118.0V117.16H631.884Q634.908 117.16 636.7560000000001 115.312Q638.604 113.464 638.604 110.44V82.888Q638.604 79.696 637.302 77.932Q636.0 76.168 631.8000000000001 76.168V75.328H640.1160000000001Q644.4000000000001 75.328 646.668 74.404Q648.768 73.47999999999999 649.6080000000001 72.136H650.4480000000001L650.532 83.896Q652.716 79.52799999999999 657.168 76.83999999999999Q661.62 74.15199999999999 666.576 74.15199999999999Q672.2040000000001 74.15199999999999 675.606 77.84799999999998Q679.008 81.544 679.008 87.592V110.44Q679.008 113.464 680.856 115.312Q682.7040000000001 117.16 685.7280000000001 117.16H685.812V118.0H660.192V117.16H660.2760000000001Q663.3000000000001 117.16 665.1480000000001 115.312Q666.9960000000001 113.464 666.9960000000001 110.44V86.752Q666.9960000000001 82.55199999999999 665.3580000000001 80.032Q663.72 77.512 661.032 77.512Q658.428 77.512 655.614 79.738Q652.8000000000001 81.964 650.7 85.744V110.44Q650.7 113.464 652.548 115.312Q654.3960000000001 117.16 657.4200000000001 117.16H657.504V118.0ZM703.948 119.176Q699.58 119.176 696.808 116.404Q694.0360000000001 113.632 694.0360000000001 109.18V76.84H686.8960000000001V75.74799999999999Q692.692 75.328 697.27 72.05199999999999Q701.8480000000001 68.776 704.788 63.232H706.1320000000001V75.328H717.3040000000001L716.464 76.84H706.1320000000001V107.332Q706.1320000000001 114.05199999999999 710.668 114.05199999999999Q712.1800000000001 114.05199999999999 714.154 113.12799999999999Q716.128 112.204 717.892 110.692V111.532Q715.12 115.06 711.34 117.118Q707.5600000000001 119.176 703.948 119.176ZM737.12 119.176Q734.936 119.176 733.844 119.00800000000001Q732.7520000000001 118.84 731.7860000000001 118.588Q730.82 118.336 729.224 118.168Q727.628 118.0 724.3520000000001 118.0L722.336 102.208H723.428Q724.772 110.104 728.4680000000001 114.094Q732.164 118.084 736.532 118.084Q740.816 118.084 743.042 116.32Q745.268 114.556 745.268 111.532Q745.268 109.6 744.302 108.13Q743.336 106.66 740.984 105.106Q738.6320000000001 103.55199999999999 734.6 101.368L732.164 100.024Q727.544 97.42 725.318 93.934Q723.092 90.448 723.092 86.416Q723.092 80.70400000000001 727.25 77.428Q731.408 74.15199999999999 738.38 74.15199999999999Q740.144 74.15199999999999 741.2360000000001 74.32Q742.3280000000001 74.488 743.336 74.74Q744.344 74.99199999999999 745.856 75.16Q747.368 75.328 749.888 75.328L751.0640000000001 88.852H750.056Q749.552 84.904 747.83 81.838Q746.1080000000001 78.77199999999999 743.7560000000001 77.05Q741.404 75.328 738.9680000000001 75.328Q735.7760000000001 75.328 733.8860000000001 77.008Q731.9960000000001 78.68799999999999 731.9960000000001 81.71199999999999Q731.9960000000001 83.97999999999999 733.4660000000001 85.86999999999999Q734.936 87.75999999999999 739.1360000000001 89.944L741.6560000000001 91.204Q747.5360000000001 94.228 750.224 97.50399999999999Q752.912 100.78 752.912 105.904Q752.912 119.008 737.12 119.176Z" fill="#FF94B8"/>
-                    <circle cx="771.928" cy="112" r="9" fill="#FF94B8"/>
-                </g>
-            </svg>
-        </a>
-        <div class="header-right">
-            <nav aria-label="Principal">
-                <a href="#inicio">Inicio</a>
-                <a href="#plantillas">Plantillas</a>
-                <a href="#contacto">Contacto</a>
-            </nav>
-            <div class="header-actions">
-                <button class="icon-btn" type="button" id="cart-btn" aria-label="Abrir bolsa de compras"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg><span class="cart-count" id="cart-count">0</span></button>
-            </div>
-        </div>
-    </header>
+        function current() { return Math.round(track.scrollLeft / track.clientWidth); }
+        function goTo(i) {
+            track.scrollTo({ left: i * track.clientWidth, behavior: reduceMotion ? 'auto' : 'smooth' });
+        }
 
-    <!-- Hero -->
-    <section class="hero">
-        <!-- Stickers decorativos -->
-        <div class="hero-stickers" aria-hidden="true">
-            <span class="sticker s-tape"><svg viewBox="0 0 140 44" focusable="false"><defs><pattern id="washi" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="12" fill="#fff" opacity="0.5"/></pattern></defs><path d="M0 2 8 6 0 10 8 14 0 18 8 22 0 26 8 30 0 34 8 38 0 42H140L132 38 140 34 132 30 140 26 132 22 140 18 132 14 140 10 132 6 140 2Z" fill="#FFDDB8"/><path d="M0 2 8 6 0 10 8 14 0 18 8 22 0 26 8 30 0 34 8 38 0 42H140L132 38 140 34 132 30 140 26 132 22 140 18 132 14 140 10 132 6 140 2Z" fill="url(#washi)"/></svg></span>
-            <span class="sticker s-star"><svg viewBox="0 0 100 100" focusable="false"><path class="sk" d="M50 6 61 38 95 38 67 58 78 92 50 71 22 92 33 58 5 38 39 38Z" fill="#FFD95E"/></svg></span>
-            <span class="sticker s-heart"><svg viewBox="0 0 100 100" focusable="false"><path class="sk" d="M50 88C20 66 6 48 6 32 6 18 17 10 29 10 38 10 46 15 50 23 54 15 62 10 71 10 83 10 94 18 94 32 94 48 80 66 50 88Z" fill="#FF94B8"/></svg></span>
-            <span class="sticker s-daisy"><svg viewBox="0 0 100 100" focusable="false"><g transform="translate(50 50)" fill="#FFD1DC"><ellipse class="sk" cx="0" cy="-24" rx="12" ry="22"/><ellipse class="sk" cx="0" cy="-24" rx="12" ry="22" transform="rotate(45)"/><ellipse class="sk" cx="0" cy="-24" rx="12" ry="22" transform="rotate(90)"/><ellipse class="sk" cx="0" cy="-24" rx="12" ry="22" transform="rotate(135)"/><ellipse class="sk" cx="0" cy="-24" rx="12" ry="22" transform="rotate(180)"/><ellipse class="sk" cx="0" cy="-24" rx="12" ry="22" transform="rotate(225)"/><ellipse class="sk" cx="0" cy="-24" rx="12" ry="22" transform="rotate(270)"/><ellipse class="sk" cx="0" cy="-24" rx="12" ry="22" transform="rotate(315)"/><circle r="15" fill="#FFD95E"/></g></svg></span>
-            <span class="sticker s-sparkle"><svg viewBox="0 0 100 100" focusable="false"><path class="sk" d="M50 4C54 32 68 46 96 50 68 54 54 68 50 96 46 68 32 54 4 50 32 46 46 32 50 4Z" fill="#FFB27A"/></svg></span>
-            <span class="sticker s-smile"><svg viewBox="0 0 100 100" focusable="false"><circle class="sk" cx="50" cy="50" r="42" fill="#A8DDBF"/><ellipse cx="36" cy="44" rx="4.5" ry="6" fill="#4A3B32"/><ellipse cx="64" cy="44" rx="4.5" ry="6" fill="#4A3B32"/><circle cx="27" cy="58" r="6" fill="#FFD1DC"/><circle cx="73" cy="58" r="6" fill="#FFD1DC"/><path d="M36 60Q50 76 64 60" fill="none" stroke="#4A3B32" stroke-width="5" stroke-linecap="round"/></svg></span>
-        </div>
-        <h1>Papelería creativa</h1>
-        <p>Planners, agendas, libros para colorear, packaging, recursos infantiles y juegos. Descarga el archivo e imprímelo hoy mismo.</p>
-        <a class="hero-cta" href="#plantillas">Ver plantillas</a>
-    </section>
+        prev.addEventListener('click', function () { goTo((current() - 1 + total) % total); });
+        next.addEventListener('click', function () { goTo((current() + 1 + total) % total); });
 
-    <!-- Notas adhesivas informativas -->
-    <section class="showcase">
-        <h2>Así funcionan las plantillas</h2>
-        <p class="showcase-lead">Lo esencial antes de comprar</p>
-        <div class="notes-container">
-            <article class="note note--yellow">
-                <h3>Compra y descarga</h3>
-                <p>Pagas, recibes el enlace en tu correo y descargas al momento. No hay envíos ni largas esperas.</p>
-                <small>Guarda tus archivos en un lugar seguro.</small>
-            </article>
-            <article class="note note--blue">
-                <h3>Listas para imprimir</h3>
-                <ul>
-                    <li>PDF y PNG en alta resolución</li>
-                    <li>Con sangrado y marcas de corte</li>
-                    <li>Tamaños carta y A4</li>
-                </ul>
-                <small>Haz siempre una prueba antes de imprimir en cantidad.</small>
-            </article>
-            <article class="note note--mint">
-                <h3>Personalízalas</h3>
-                <p>Algunas plantillas incluyen un archivo editable para cambiar colores, textos y tu logo.</p>
-                <small>Busca la etiqueta «Personalizable» en cada producto.</small>
-            </article>
-            <article class="note note--lilac">
-                <h3>Úsalas en tu negocio</h3>
-                <p>Puedes vender los productos que imprimas con ellas, como planners, agendas, cajas o libros para colorear.</p>
-                <small>No está permitido revender ni compartir los archivos.</small>
-            </article>
-        </div>
-    </section>
+        track.addEventListener('scroll', function () {
+            var i = current();
+            dots.forEach(function (d, n) { d.classList.toggle('active', n === i); });
+        }, { passive: true });
 
-    <!-- Plantillas y filtros -->
-    <section class="projects" id="plantillas">
-        <h2>Echa un vistazo a las plantillas recientes</h2>
+        track.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowRight') { e.preventDefault(); next.click(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prev.click(); }
+        });
+    }
 
-        <div class="filter-container" role="group" aria-label="Filtrar plantillas por categoría">
-            <button class="filter-btn active" type="button" data-filter="todos" aria-pressed="true">Todos</button>
-            <button class="filter-btn" type="button" data-filter="planners" aria-pressed="false">Planners</button>
-            <button class="filter-btn" type="button" data-filter="agendas" aria-pressed="false">Agendas</button>
-            <button class="filter-btn" type="button" data-filter="libros" aria-pressed="false">Libros para colorear</button>
-            <button class="filter-btn" type="button" data-filter="cajas" aria-pressed="false">Packaging</button>
-            <button class="filter-btn" type="button" data-filter="infantil" aria-pressed="false">Recursos infantiles</button>
-            <button class="filter-btn" type="button" data-filter="juegos" aria-pressed="false">Juegos</button>
-            <button class="filter-btn" type="button" data-filter="diseno" aria-pressed="false">Diseño</button>
-        </div>
+    /* ---------- Respaldo de imágenes de Drive ---------- */
+    function attachImageFallback(img) {
+        img.addEventListener('error', function onErr() {
+            img.removeEventListener('error', onErr);
+            var m = (img.getAttribute('src') || '').match(/\/d\/([\w-]+)/);
+            if (m) img.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1080';
+            else img.classList.add('img-error');
+        });
+    }
 
-        <!-- El contenedor donde se cargarán dinámicamente los productos desde Google Sheets -->
-        <div class="project-grid" id="product-grid"></div>
-        <p class="empty-msg" id="empty-msg" hidden>Pronto tendremos plantillas en esta categoría.</p>
-    </section>
+    /* ---------- Carga de productos desde Google Sheets en tiempo real ---------- */
+    function loadProducts() {
+        var grid = $('#product-grid');
+        if (!grid) return;
 
-    <!-- Footer -->
-    <footer id="contacto">
-        <div class="socials">
-            <a href="https://www.instagram.com/TU_USUARIO/" target="_blank" rel="noopener noreferrer" aria-label="Instagram (se abre en una pestaña nueva)"><svg class="icon" aria-hidden="true"><use href="#i-instagram"/></svg></a>
-            <a href="mailto:shop.pretty.prints.designs@gmail.com" aria-label="Escríbenos por correo"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg></a>
-        </div>
-        <nav class="legal-links" aria-label="Información legal">
-            <a class="legal-link" href="privacidad.html">Política de privacidad</a>
-            <a class="legal-link" href="terminos.html">Términos y condiciones</a>
-        </nav>
-        <p>&copy; 2026 Pretty Prints. Todos los derechos reservados.</p>
-    </footer>
+        var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzU4qwqIsMf77-oOwu2ZAYhxrKTxMseFkVR9GlMgi8E5nqHg8a2_4a3oarE7RCtXnmN1A/exec?action=getProducts';
 
-    <!-- Aviso de cookies -->
-    <div class="cookie-banner" id="cookie-banner" role="region" aria-label="Aviso de cookies" hidden>
-        <p>Usamos cookies necesarias para que la tienda funcione y, si nos lo permites, otras para medir las visitas y mejorar nuestras plantillas. <button class="legal-link" type="button" data-open="legal-cookies">Más información</button></p>
-        <div class="cookie-actions">
-            <button class="btn-ghost" type="button" id="cookie-necessary">Solo necesarias</button>
-            <button class="btn-solid" type="button" id="cookie-all">Aceptar todas</button>
-        </div>
-    </div>
+        grid.innerHTML = '<p class="empty-msg">Cargando plantillas…</p>';
 
-    <!-- Textos legales -->
-    <dialog class="legal" id="legal-cookies" aria-labelledby="t-cookies">
-        <div class="legal-head">
-            <h2 id="t-cookies">Política de cookies</h2>
-            <button class="legal-close" type="button" data-close aria-label="Cerrar"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
-        </div>
-        <div class="legal-body">
-            <p class="updated">Última actualización: octubre de 2026</p>
+        fetch(WEB_APP_URL)
+            .then(function (res) {
+                if (!res.ok) throw new Error('No se pudo cargar el catálogo desde Google Sheets');
+                return res.json();
+            })
+            .then(function (products) {
+                if (!Array.isArray(products) || products.length === 0) {
+                    grid.innerHTML = '<p class="empty-msg">No hay productos disponibles en este momento.</p>';
+                    return;
+                }
 
-            <h3>1. Qué son las cookies</h3>
-            <p>Son pequeños archivos que un sitio web guarda en tu dispositivo para recordar información. También usamos tecnologías parecidas, como el almacenamiento local del navegador.</p>
+                grid.innerHTML = products.map(function (p) {
+                    var badgesHtml = (p.badges || []).map(function (b) {
+                        var isCustom = b.toLowerCase().indexOf('personalizable') > -1;
+                        return '<span class="badge ' + (isCustom ? 'badge--custom' : '') + '">' + esc(b) + '</span>';
+                    }).join('');
 
-            <h3>2. Qué tipos usamos</h3>
-            <ul>
-                <li><strong>Necesarias (siempre activas):</strong> permiten que la tienda funcione, por ejemplo recordar tu bolsa de compras y tu elección sobre cookies.</li>
-                <li><strong>De preferencias:</strong> recuerdan ajustes como el idioma o la moneda.</li>
-                <li><strong>Analíticas:</strong> nos dicen qué plantillas se visitan más y cómo se usa la web. Solo se activan si las aceptas.</li>
-                <li><strong>De marketing:</strong> píxeles de redes sociales como Pinterest o Instagram, para medir campañas. Solo se activan si las aceptas.</li>
-            </ul>
+                    var imagesHtml = (p.images || []).map(function (img, idx) {
+                        return '<img src="' + esc(img) + '" alt="' + esc(p.name) + ', imagen ' + (idx + 1) + ' de ' + p.images.length + '" width="1080" height="1080" decoding="async" referrerpolicy="no-referrer"' + (idx === 0 ? '' : ' loading="lazy"') + '>';
+                    }).join('');
 
-            <h3>3. Servicios externos</h3>
-            <p>Esta web carga sus tipografías (Google Fonts) desde servidores de terceros, que pueden recibir tu dirección IP al cargarlas.</p>
+                    var dotsHtml = (p.images || []).map(function (_, idx) {
+                        return '<span class="dot ' + (idx === 0 ? 'active' : '') + '"></span>';
+                    }).join('');
 
-            <h3>4. Cómo cambiar tu elección</h3>
-            <p>Puedes aceptar todas las cookies o solo las necesarias en el aviso que aparece al entrar a la web.</p>
-        </div>
-    </dialog>
+                    return '<article class="project-item" data-category="' + esc(p.category) + '" data-id="' + esc(p.id) + '" data-price="' + p.price + '">' +
+                        '<div class="slider' + ((p.images || []).length < 2 ? ' is-single' : '') + '" role="group" aria-roledescription="carrusel" aria-label="Imágenes de ' + esc(p.name) + '">' +
+                            '<div class="slides" tabindex="0">' + imagesHtml + '</div>' +
+                            '<button class="slider-btn prev" type="button" aria-label="Imagen anterior"><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>' +
+                            '<button class="slider-btn next" type="button" aria-label="Imagen siguiente"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+                            '<div class="dots" aria-hidden="true">' + dotsHtml + '</div>' +
+                        '</div>' +
+                        '<div class="product-info">' +
+                            '<div class="badges">' + badgesHtml + '</div>' +
+                            '<div class="product-title">' + esc(p.name) + '</div>' +
+                            '<div class="product-price">$' + Number(p.price).toFixed(2) + ' CUP</div>' +
+                            '<button class="buy-btn" type="button"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg> Añadir a la bolsa</button>' +
+                        '</div>' +
+                    '</article>';
+                }).join('');
 
-    <!-- ================= Bolsa de compras (panel lateral) ================= -->
-    <div class="cart-overlay" id="cart-overlay"></div>
-    <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true">
-        <div class="cart-head">
-            <h2 id="cart-title">Tu bolsa de compras (<span id="cart-count-label">0</span>)</h2>
-            <button class="legal-close" type="button" id="cart-close" aria-label="Cerrar bolsa"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
-        </div>
+                // Inicializar carruseles y filtros después de pintar
+                $$('.slider', grid).forEach(initSlider);
+                $$('.slides img', grid).forEach(attachImageFallback);
+                applyFilter();
+            })
+            .catch(function (err) {
+                console.error(err);
+                grid.innerHTML = '<p class="empty-msg">Error al cargar las plantillas.</p>';
+            });
+    }
 
-        <div class="cart-body">
-            <!-- Paso 1 y 2: bolsa + datos del cliente -->
-            <section class="cart-view" id="view-cart">
-                <div id="cart-items"></div>
+    /* ---------- Filtro de categorías ---------- */
+    var filterBtns = $$('.filter-btn');
+    var emptyMsg = $('#empty-msg');
+    var currentFilter = 'todos';
 
-                <div class="cart-box" id="checkout-box" hidden>
-                    <h3>Datos del pedido</h3>
-                    <form id="order-form" novalidate>
-                        <div class="field">
-                            <label for="client-name">Nombre o identificador *</label>
-                            <input type="text" id="client-name" autocomplete="name" aria-describedby="client-name-error" required>
-                            <span class="field-error" id="client-name-error"></span>
-                        </div>
-                        <div class="field">
-                            <label for="client-email">Correo electrónico *</label>
-                            <input type="email" id="client-email" autocomplete="email" aria-describedby="client-email-hint client-email-error" required>
-                            <span class="field-hint" id="client-email-hint">Aquí recibirás los archivos.</span>
-                            <span class="field-error" id="client-email-error"></span>
-                        </div>
-                    </form>
-                </div>
-            </section>
+    function applyFilter() {
+        var visible = 0;
+        $$('.project-item').forEach(function (it) {
+            var cats = (it.getAttribute('data-category') || '').split(/\s+/);
+            var show = currentFilter === 'todos' || cats.indexOf(currentFilter) > -1;
+            it.hidden = !show;
+            if (show) visible++;
+        });
+        if (emptyMsg) emptyMsg.hidden = visible > 0;
+    }
 
-            <!-- Paso 4: instrucciones y reporte de pago -->
-            <section class="cart-view" id="view-pay" hidden>
-                <h3>Datos para el pago</h3>
-                <p>Haz la transferencia desde Transfermóvil con el monto exacto y guarda el número de transacción que te llega por SMS.</p>
-                <dl class="pay-data">
-                    <div><dt>Monto exacto</dt><dd class="pay-amount" id="pay-amount"></dd></div>
-                    <div><dt>Cuenta o tarjeta</dt><dd id="pay-account"></dd></div>
-                    <div><dt>Teléfono</dt><dd id="pay-phone"></dd></div>
-                </dl>
-                <ul class="pay-list" id="pay-items"></ul>
-                <p>Tus datos y tu bolsa quedan guardados en este navegador. Puedes cerrar esta ventana y volver cuando termines la transferencia.</p>
-                <form id="pay-form" novalidate>
-                    <div class="field">
-                        <label for="op-number">Número de transacción (SMS de Transfermóvil) *</label>
-                        <input type="text" id="op-number" autocomplete="off" aria-describedby="op-number-error" required>
-                        <span class="field-error" id="op-number-error"></span>
-                    </div>
-                </form>
-                <button class="btn-ghost" type="button" id="btn-edit">Editar mi bolsa</button>
-            </section>
+    filterBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            currentFilter = btn.getAttribute('data-filter');
+            var bar = btn.parentNode;
+            if (bar && bar.scrollTo) {
+                bar.scrollTo({ left: btn.offsetLeft - (bar.clientWidth - btn.offsetWidth) / 2, behavior: reduceMotion ? 'auto' : 'smooth' });
+            }
+            filterBtns.forEach(function (b) {
+                var on = b === btn;
+                b.classList.toggle('active', on);
+                b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            applyFilter();
+        });
+    });
 
-            <!-- Reporte listo: envío del comprobante -->
-            <section class="cart-view" id="view-sent" hidden>
-                <h3>Tu reporte está listo</h3>
-                <p>Pulsa «Enviar comprobante por correo» para abrir tu correo con el mensaje ya preparado para <strong id="sent-to"></strong>. Si no se abre, copia los datos y envíalos tú mismo.</p>
-                <label class="sr-only" for="mail-preview">Mensaje del comprobante</label>
-                <textarea class="mail-preview" id="mail-preview" rows="10" readonly></textarea>
-                <div class="cart-actions-row">
-                    <button class="btn-ghost" type="button" id="btn-copy">Copiar mensaje</button>
-                    <button class="btn-ghost" type="button" id="btn-new">Empezar un pedido nuevo</button>
-                </div>
-                <p class="field-hint" id="copy-status" role="status" aria-live="polite"></p>
-            </section>
-        </div>
+    /* ---------- Ventanas legales ---------- */
+    $$('[data-open]').forEach(function (el) {
+        el.addEventListener('click', function () {
+            var dlg = document.getElementById(el.getAttribute('data-open'));
+            if (dlg && !dlg.open) {
+                dlg.showModal();
+                $('.legal-body', dlg).scrollTop = 0;
+            }
+        });
+    });
 
-        <div class="cart-foot">
-            <div class="cart-total"><span>Total a pagar</span><strong id="cart-total">$0.00 CUP</strong></div>
-            <button class="btn-solid cart-cta" type="submit" form="order-form" id="btn-continue" hidden>Continuar para pagar</button>
-            <button class="btn-solid cart-cta" type="submit" form="pay-form" id="btn-confirm" hidden>Confirmar y enviar reporte</button>
-            <a class="btn-solid cart-cta" id="btn-mail" href="#" hidden>Enviar comprobante por correo</a>
-        </div>
-    </aside>
-    <span class="sr-only" id="cart-live" role="status" aria-live="polite"></span>
+    $$('dialog.legal').forEach(function (dlg) {
+        var closeBtn = $('[data-close]', dlg);
+        if (closeBtn) closeBtn.addEventListener('click', function () { dlg.close(); });
+        dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+    });
 
-    <!-- ================= Scripts principales ================= -->
-    <script src="script.js"></script>
+    /* ---------- Cookies ---------- */
+    var KEY = 'prettyprints-cookies';
+    var banner = $('#cookie-banner');
 
-</body>
-</html>
+    function getChoice() {
+        try { return localStorage.getItem(KEY); } catch (e) { return null; }
+    }
+    function saveChoice(v) {
+        try { localStorage.setItem(KEY, v); } catch (e) { /* sin almacenamiento */ }
+        if (banner) banner.hidden = true;
+    }
+
+    if (banner) {
+        var btnAll = $('#cookie-all');
+        var btnNec = $('#cookie-necessary');
+        if (btnAll) btnAll.addEventListener('click', function () { saveChoice('all'); });
+        if (btnNec) btnNec.addEventListener('click', function () { saveChoice('necessary'); });
+
+        var stored = getChoice();
+        if (!stored) {
+            banner.hidden = false;
+        }
+    }
+
+    function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+
+    /* ---------- Altura del encabezado (para que los filtros queden fijos justo debajo) ---------- */
+    function setHeaderHeight() {
+        var h = $('header');
+        if (h) document.documentElement.style.setProperty('--header-h', h.offsetHeight + 'px');
+    }
+    setHeaderHeight();
+    window.addEventListener('resize', setHeaderHeight);
+    window.addEventListener('load', setHeaderHeight);
+
+    // Iniciar carga de productos al abrir la página
+    loadProducts();
+
+    window.PrettyPrintsUI = { initSlider: initSlider, applyFilter: applyFilter };
+})();
+
+/* ---------- Bolsa de compras y flujo de pedido ---------- */
+
+(function () {
+    'use strict';
+
+    var STORE = {
+        adminEmail: 'shop.pretty.prints.designs@gmail.com',
+        account: '9205129977781914',
+        phone: '+5358488820'
+    };
+
+    var CART_KEY = 'prettyprints-cart';
+    var ORDER_KEY = 'prettyprints-order';
+
+    var $ = function (s, r) { return (r || document).querySelector(s); };
+    var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+    function readJSON(key, fallback) {
+        try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+    }
+    function writeJSON(key, value) {
+        try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* sin almacenamiento */ }
+    }
+    function removeKey(key) {
+        try { localStorage.removeItem(key); } catch (e) { /* sin almacenamiento */ }
+    }
+    function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+    function fmt(cents) { return '$' + (cents / 100).toFixed(2) + ' CUP'; }
+
+    function loadCart() {
+        var raw = readJSON(CART_KEY, []);
+        if (!Array.isArray(raw)) return [];
+        return raw.filter(function (i) {
+            return i && typeof i.id === 'string' && typeof i.name === 'string' &&
+                isFinite(i.cents) && i.cents >= 0 && i.qty >= 1;
+        }).map(function (i) {
+            return { id: i.id, name: i.name, cents: Math.round(i.cents), image: typeof i.image === 'string' ? i.image : '', qty: Math.min(99, Math.floor(i.qty)) };
+        });
+    }
+
+    function loadOrder() {
+        var o = readJSON(ORDER_KEY, null);
+        if (!o || typeof o !== 'object') return null;
+        var base = { name: String(o.name || ''), email: String(o.email || '') };
+        if ((o.step === 'payment' || o.step === 'sent') && Array.isArray(o.items) && isFinite(o.totalCents)) {
+            base.step = o.step;
+            base.items = o.items.map(function (i) {
+                return { name: String(i.name), qty: Math.floor(i.qty) || 1, cents: Math.round(i.cents) || 0 };
+            });
+            base.totalCents = Math.round(o.totalCents);
+            base.operation = String(o.operation || '');
+        }
+        return base;
+    }
+
+    var cart = loadCart();
+    var order = loadOrder();
+
+    function totalCents() {
+        return cart.reduce(function (sum, i) { return sum + i.cents * i.qty; }, 0);
+    }
+
+    function currentStep() {
+        return (order && order.step && cart.length) ? order.step : 'cart';
+    }
+
+    function cartChanged() {
+        writeJSON(CART_KEY, cart);
+        if (order && order.step) {
+            order = { name: order.name, email: order.email };
+            writeJSON(ORDER_KEY, order);
+        }
+        render();
+    }
+
+    var drawer = $('#cart-drawer');
+    var overlay = $('#cart-overlay');
+    var lastFocus = null;
+
+    function openCart() {
+        if (!drawer) return;
+        lastFocus = document.activeElement;
+        drawer.classList.add('open');
+        overlay.classList.add('open');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        setTimeout(function () { var closeBtn = $('#cart-close'); if (closeBtn) closeBtn.focus(); }, 50);
+    }
+    function closeCart() {
+        if (!drawer) return;
+        drawer.classList.remove('open');
+        overlay.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    var cartBtn = $('#cart-btn');
+    var cartClose = $('#cart-close');
+    if (cartBtn) cartBtn.addEventListener('click', openCart);
+    if (cartClose) cartClose.addEventListener('click', closeCart);
+    if (overlay) overlay.addEventListener('click', closeCart);
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && drawer && drawer.classList.contains('open')) closeCart();
+    });
+
+    function addFromCard(card) {
+        var title = $('.product-title', card);
+        var img = $('.slides img', card);
+        var priceEl = $('.product-price', card);
+        var name = title ? title.textContent.trim() : '';
+        var price = parseFloat(card.getAttribute('data-price'));
+        if (!isFinite(price) && priceEl) price = parseFloat((priceEl.textContent.match(/[\d.]+/) || [''])[0]);
+        if (!name || !isFinite(price)) return;
+        var id = card.getAttribute('data-id') || name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+        var found = cart.filter(function (i) { return i.id === id; })[0];
+        if (found) {
+            found.qty = Math.min(99, found.qty + 1);
+        } else {
+            cart.push({ id: id, name: name, cents: Math.round(price * 100), image: img ? img.getAttribute('src') : '', qty: 1 });
+        }
+        cartChanged();
+        var live = $('#cart-live');
+        if (live) live.textContent = name + ' añadida a la bolsa.';
+        openCart();
+    }
+
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest ? e.target.closest('.buy-btn') : null;
+        if (!btn) return;
+        var card = btn.closest('.project-item');
+        if (card) addFromCard(card);
+    });
+
+    var cartItemsEl = $('#cart-items');
+    if (cartItemsEl) {
+        cartItemsEl.addEventListener('click', function (e) {
+            var btn = e.target.closest ? e.target.closest('[data-action]') : null;
+            if (!btn) return;
+            var id = btn.getAttribute('data-id');
+            var item = cart.filter(function (i) { return i.id === id; })[0];
+            if (!item) return;
+            var action = btn.getAttribute('data-action');
+            if (action === 'remove') {
+                cart = cart.filter(function (i) { return i !== item; });
+            } else if (action === 'inc') {
+                item.qty = Math.min(99, item.qty + 1);
+            } else if (action === 'dec') {
+                item.qty -= 1;
+                if (item.qty <= 0) cart = cart.filter(function (i) { return i !== item; });
+            }
+            cartChanged();
+        });
+    }
+
+    function buildMail(o) {
+        var subject = 'Nuevo pedido';
+        var lines = [
+            'Hola, acabo de realizar el pago de mi pedido en Pretty Prints.',
+            '',
+            'Número de transacción (Transfermóvil): ' + o.operation,
+            'Correo: ' + o.email,
+            'Nombre: ' + o.name,
+            'Monto pagado: ' + fmt(o.totalCents),
+            '',
+            'Plantillas:'
+        ];
+        o.items.forEach(function (i) { lines.push('- ' + i.qty + ' x ' + i.name + ' (' + fmt(i.cents * i.qty) + ')'); });
+        var body = lines.join('\n');
+        return {
+            subject: subject,
+            body: body,
+            href: 'mailto:' + STORE.adminEmail + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body)
+        };
+    }
+
+    function render() {
+        var count = cart.reduce(function (sum, i) { return sum + i.qty; }, 0);
+        var countEl = $('#cart-count');
+        var countLabel = $('#cart-count-label');
+        if (countEl) countEl.textContent = count;
+        if (countLabel) countLabel.textContent = count;
+
+        var step = currentStep();
+        var viewCart = $('#view-cart');
+        var viewPay = $('#view-pay');
+        var viewSent = $('#view-sent');
+        var btnCont = $('#btn-continue');
+        var btnConf = $('#btn-confirm');
+        var btnMail = $('#btn-mail');
+        var cartTotal = $('#cart-total');
+
+        if (viewCart) viewCart.hidden = step !== 'cart';
+        if (viewPay) viewPay.hidden = step !== 'payment';
+        if (viewSent) viewSent.hidden = step !== 'sent';
+        if (btnCont) btnCont.hidden = !(step === 'cart' && cart.length);
+        if (btnConf) btnConf.hidden = step !== 'payment';
+        if (btnMail) btnMail.hidden = step !== 'sent';
+        if (cartTotal) cartTotal.textContent = fmt(step === 'cart' ? totalCents() : order.totalCents);
+
+        if (cartItemsEl) {
+            if (!cart.length) {
+                cartItemsEl.innerHTML = '<p class="cart-empty">Tu bolsa está vacía</p>';
+            } else {
+                cartItemsEl.innerHTML = cart.map(function (i) {
+                    return '<div class="cart-line">' +
+                        (i.image ? '<img src="' + esc(i.image) + '" alt="" loading="lazy">' : '<img alt="" style="visibility:hidden">') +
+                        '<div class="cart-line-info">' +
+                            '<div class="cart-line-name">' + esc(i.name) + '</div>' +
+                            '<div class="cart-line-row">' +
+                                '<div class="qty">' +
+                                    '<button type="button" data-action="dec" data-id="' + esc(i.id) + '" aria-label="Quitar una unidad de ' + esc(i.name) + '">-</button>' +
+                                    '<span>' + i.qty + '</span>' +
+                                    '<button type="button" data-action="inc" data-id="' + esc(i.id) + '" aria-label="Añadir una unidad de ' + esc(i.name) + '">+</button>' +
+                                '</div>' +
+                                '<span class="cart-line-price">' + fmt(i.cents * i.qty) + '</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<button class="cart-remove" type="button" data-action="remove" data-id="' + esc(i.id) + '" aria-label="Eliminar ' + esc(i.name) + ' de la bolsa"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>' +
+                    '</div>';
+                }).join('');
+            }
+        }
+
+        var checkoutBox = $('#checkout-box');
+        if (checkoutBox) checkoutBox.hidden = !cart.length || step !== 'cart';
+
+        if (step === 'cart' && order) {
+            var nameIn = $('#client-name');
+            var emailIn = $('#client-email');
+            if (nameIn && !nameIn.value) nameIn.value = order.name || '';
+            if (emailIn && !emailIn.value) emailIn.value = order.email || '';
+        }
+
+        if (step === 'payment' || step === 'sent') {
+            var payAmt = $('#pay-amount');
+            var payAcc = $('#pay-account');
+            var payPho = $('#pay-phone');
+            var payIts = $('#pay-items');
+            var opNum = $('#op-number');
+
+            if (payAmt) payAmt.textContent = fmt(order.totalCents);
+            if (payAcc) payAcc.textContent = STORE.account;
+            if (payPho) payPho.textContent = STORE.phone;
+            if (payIts) {
+                payIts.innerHTML = order.items.map(function (i) {
+                    return '<li><span>' + i.qty + ' x ' + esc(i.name) + '</span><span>' + fmt(i.cents * i.qty) + '</span></li>';
+                }).join('');
+            }
+            if (opNum && !opNum.value) opNum.value = order.operation || '';
+        }
+
+        if (step === 'sent') {
+            var mail = buildMail(order);
+            if (btnMail) btnMail.setAttribute('href', mail.href);
+            var sentTo = $('#sent-to');
+            var mailPrev = $('#mail-preview');
+            if (sentTo) sentTo.textContent = STORE.adminEmail;
+            if (mailPrev) mailPrev.value = 'Para: ' + STORE.adminEmail + '\nAsunto: ' + mail.subject + '\n\n' + mail.body;
+        }
+    }
+
+    function setFieldError(inputId, msg) {
+        var input = $('#' + inputId);
+        var err = $('#' + inputId + '-error');
+        if (err) err.textContent = msg || '';
+        if (input) input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    }
+
+    var orderForm = $('#order-form');
+    if (orderForm) {
+        orderForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!cart.length) return;
+            var name = $('#client-name').value.trim();
+            var email = $('#client-email').value.trim();
+            var ok = true;
+
+            setFieldError('client-name', '');
+            setFieldError('client-email', '');
+            if (name.length < 2) { setFieldError('client-name', 'Escribe tu nombre o un identificador.'); ok = false; }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setFieldError('client-email', 'Escribe un correo válido.'); ok = false; }
+            if (!ok) {
+                var bad = $('[aria-invalid="true"]', orderForm);
+                if (bad) bad.focus();
+                return;
+            }
+
+            order = {
+                name: name,
+                email: email,
+                step: 'payment',
+                items: cart.map(function (i) { return { name: i.name, qty: i.qty, cents: i.cents }; }),
+                totalCents: totalCents(),
+                operation: '',
+                savedAt: Date.now()
+            };
+            writeJSON(ORDER_KEY, order);
+            render();
+            var cartBody = $('.cart-body', drawer);
+            if (cartBody) cartBody.scrollTop = 0;
+        });
+    }
+
+    var payForm = $('#pay-form');
+    if (payForm) {
+        payForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!order || order.step !== 'payment') return;
+            var op = $('#op-number').value.trim();
+            setFieldError('op-number', '');
+            if (!/^[A-Za-z0-9-]{4,40}$/.test(op)) {
+                setFieldError('op-number', 'Escribe el número de transacción tal como aparece en el SMS (4 a 40 letras o números).');
+                var opIn = $('#op-number');
+                if (opIn) opIn.focus();
+                return;
+            }
+            order.operation = op;
+            order.step = 'sent';
+            writeJSON(ORDER_KEY, order);
+
+            // ENVÍO DE DATOS A GOOGLE SHEETS
+            var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzU4qwqIsMf77-oOwu2ZAYhxrKTxMseFkVR9GlMgi8E5nqHg8a2_4a3oarE7RCtXnmN1A/exec';
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(order)
+            }).catch(function (err) {
+                console.error('Error al registrar pedido en Google Sheets', err);
+            });
+
+            render();
+            var cartBody = $('.cart-body', drawer);
+            if (cartBody) cartBody.scrollTop = 0;
+        });
+    }
+
+    var btnEdit = $('#btn-edit');
+    if (btnEdit) {
+        btnEdit.addEventListener('click', function () {
+            if (!order) return;
+            order = { name: order.name, email: order.email };
+            writeJSON(ORDER_KEY, order);
+            render();
+        });
+    }
+
+    var btnCopy = $('#btn-copy');
+    if (btnCopy) {
+        btnCopy.addEventListener('click', function () {
+            var area = $('#mail-preview');
+            var status = $('#copy-status');
+            function done(ok) { if (status) status.textContent = ok ? 'Mensaje copiado.' : 'No se pudo copiar; selecciona el texto y cópialo.'; }
+            if (!area) return;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(area.value).then(function () { done(true); }, function () {
+                    area.select();
+                    try { done(document.execCommand('copy')); } catch (err) { done(false); }
+                });
+            } else {
+                area.select();
+                try { done(document.execCommand('copy')); } catch (err) { done(false); }
+            }
+        });
+    }
+
+    var btnNew = $('#btn-new');
+    if (btnNew) {
+        btnNew.addEventListener('click', function () {
+            cart = [];
+            order = null;
+            removeKey(CART_KEY);
+            removeKey(ORDER_KEY);
+            var nameIn = $('#client-name');
+            var emailIn = $('#client-email');
+            var opNum = $('#op-number');
+            var status = $('#copy-status');
+            if (nameIn) nameIn.value = '';
+            if (emailIn) emailIn.value = '';
+            if (opNum) opNum.value = '';
+            if (status) status.textContent = '';
+            render();
+        });
+    }
+
+    render();
+})();
