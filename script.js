@@ -49,7 +49,7 @@
         var grid = $('#product-grid');
         if (!grid) return;
 
-        var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzU4qwqIsMf77-oOwu2ZAYhxrKTxMseFkVR9GlMgi8E5nqHg8a2_4a3oarE7RCtXnmN1A/exec?action=getProducts';
+        var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzQKi0daFUMdWMSjRACwgFTCCxSsSZ7lofqnT8GnrNBlnpdCmm5xzWON2qnht3QN7UE/exec?action=getProducts';
 
         grid.innerHTML = '<p class="empty-msg">Cargando plantillas…</p>';
 
@@ -526,7 +526,7 @@
             writeJSON(ORDER_KEY, order);
 
             // ENVÍO DE DATOS A GOOGLE SHEETS
-            var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzU4qwqIsMf77-oOwu2ZAYhxrKTxMseFkVR9GlMgi8E5nqHg8a2_4a3oarE7RCtXnmN1A/exec';
+            var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzQKi0daFUMdWMSjRACwgFTCCxSsSZ7lofqnT8GnrNBlnpdCmm5xzWON2qnht3QN7UE/exec';
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
