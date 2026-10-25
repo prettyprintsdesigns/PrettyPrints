@@ -1406,3 +1406,60 @@ dialog.legal::backdrop {
 .project-item .buy-btn {
     margin-top: auto;
 }
+
+/* =====================================================================
+   Notas adhesivas: en móvil van en una sola fila deslizable
+   ===================================================================== */
+.notes-hint {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .showcase {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .showcase h2,
+    .showcase-lead {
+        padding: 0 20px;
+    }
+
+    .notes-hint {
+        display: block;
+        margin-top: 10px;
+        font-family: 'Caveat', cursive;
+        font-size: 1.3rem;
+        font-weight: 600;
+        opacity: 0.8;
+    }
+
+    .notes-container {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 18px;
+        max-width: none;
+        margin: 20px 0 0;
+        /* espacio arriba/abajo para que no se corten las sombras ni la inclinación */
+        padding: 22px 20px 34px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: 20px;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+    }
+
+    .notes-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .note {
+        flex: 0 0 78%;
+        max-width: 290px;
+        width: auto;
+        scroll-snap-align: center;
+    }
+}
