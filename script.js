@@ -5,6 +5,15 @@
     var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    /* ---------- Botón Inicio: sube directo al tope de la página ---------- */
+    $$('a[href="#inicio"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+            if (window.history && history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+        });
+    });
+
     /* ---------- Deslizador de imágenes ---------- */
     function initSlider(slider) {
         var track = $('.slides', slider);
@@ -44,64 +53,92 @@
         });
     }
 
-    /* ---------- Carga de productos desde Google Sheets en tiempo real ---------- */
+    /* ---------- Imágenes livianas: pide a Drive una versión de 640 px en vez de 1080 ---------- */
+    function lightImg(url) {
+        var u = String(url || '');
+        if (!/(drive\.google\.com|googleusercontent\.com)/.test(u)) return u;
+        var m = u.match(/\/d\/([\w-]+)/) || u.match(/[?&]id=([\w-]+)/);
+        return m ? 'https://lh3.googleusercontent.com/d/' + m[1] + '=w640' : u;
+    }
+
+    /* ---------- Carga de productos desde Google Sheets (con caché local) ---------- */
+    var CATALOG_URL = 'https://script.google.com/macros/s/AKfycbzQKi0daFUMdWMSjRACwgFTCCxSsSZ7lofqnT8GnrNBlnpdCmm5xzWON2qnht3QN7UE/exec?action=getProducts';
+    var CATALOG_KEY = 'prettyprints-catalog';
+
+    function renderProducts(grid, products) {
+        grid.innerHTML = products.map(function (p, pi) {
+            var badgesHtml = (p.badges || []).map(function (b) {
+                var isCustom = b.toLowerCase().indexOf('personalizable') > -1;
+                return '<span class="badge ' + (isCustom ? 'badge--custom' : '') + '">' + esc(b) + '</span>';
+            }).join('');
+
+            var imagesHtml = (p.images || []).map(function (img, idx) {
+                // Solo las primeras tarjetas cargan de inmediato; el resto, al acercarse
+                var eager = idx === 0 && pi < 4;
+                return '<img src="' + esc(lightImg(img)) + '" alt="' + esc(p.name) + ', imagen ' + (idx + 1) + ' de ' + p.images.length + '" width="1080" height="1080" decoding="async" referrerpolicy="no-referrer"' +
+                    (eager ? (pi < 2 ? ' fetchpriority="high"' : '') : ' loading="lazy"') + '>';
+            }).join('');
+
+            var dotsHtml = (p.images || []).map(function (_, idx) {
+                return '<span class="dot ' + (idx === 0 ? 'active' : '') + '"></span>';
+            }).join('');
+
+            return '<article class="project-item" data-category="' + esc(p.category) + '" data-id="' + esc(p.id) + '" data-price="' + p.price + '">' +
+                '<div class="slider' + ((p.images || []).length < 2 ? ' is-single' : '') + '" role="group" aria-roledescription="carrusel" aria-label="Imágenes de ' + esc(p.name) + '">' +
+                    '<div class="slides" tabindex="0">' + imagesHtml + '</div>' +
+                    '<button class="slider-btn prev" type="button" aria-label="Imagen anterior"><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>' +
+                    '<button class="slider-btn next" type="button" aria-label="Imagen siguiente"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+                    '<div class="dots" aria-hidden="true">' + dotsHtml + '</div>' +
+                '</div>' +
+                '<div class="product-info">' +
+                    '<div class="badges">' + badgesHtml + '</div>' +
+                    '<div class="product-title">' + esc(p.name) + '</div>' +
+                    '<div class="product-price">$' + Number(p.price).toFixed(2) + ' CUP</div>' +
+                    '<button class="buy-btn" type="button"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg> Añadir a la bolsa</button>' +
+                '</div>' +
+            '</article>';
+        }).join('');
+
+        $$('.slider', grid).forEach(initSlider);
+        $$('.slides img', grid).forEach(attachImageFallback);
+        applyFilter();
+        document.dispatchEvent(new CustomEvent('products:rendered'));
+    }
+
     function loadProducts() {
         var grid = $('#product-grid');
         if (!grid) return;
 
-        var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzQKi0daFUMdWMSjRACwgFTCCxSsSZ7lofqnT8GnrNBlnpdCmm5xzWON2qnht3QN7UE/exec?action=getProducts';
+        var cachedRaw = null, cached = null;
+        try { cachedRaw = localStorage.getItem(CATALOG_KEY); cached = cachedRaw ? JSON.parse(cachedRaw) : null; } catch (e) { cached = null; }
+        var shown = Array.isArray(cached) && cached.length > 0;
 
-        grid.innerHTML = '<p class="empty-msg">Cargando plantillas…</p>';
+        if (shown) {
+            // Se muestra al instante lo último que se vio y se actualiza en segundo plano
+            renderProducts(grid, cached);
+        } else {
+            grid.innerHTML = '<div class="project-item skeleton" aria-hidden="true"></div><div class="project-item skeleton" aria-hidden="true"></div><div class="project-item skeleton" aria-hidden="true"></div><div class="project-item skeleton" aria-hidden="true"></div>';
+        }
 
-        fetch(WEB_APP_URL)
+        fetch(CATALOG_URL)
             .then(function (res) {
                 if (!res.ok) throw new Error('No se pudo cargar el catálogo desde Google Sheets');
                 return res.json();
             })
             .then(function (products) {
                 if (!Array.isArray(products) || products.length === 0) {
+                    try { localStorage.removeItem(CATALOG_KEY); } catch (e) { /* sin almacenamiento */ }
                     grid.innerHTML = '<p class="empty-msg">No hay productos disponibles en este momento.</p>';
                     return;
                 }
-
-                grid.innerHTML = products.map(function (p) {
-                    var badgesHtml = (p.badges || []).map(function (b) {
-                        var isCustom = b.toLowerCase().indexOf('personalizable') > -1;
-                        return '<span class="badge ' + (isCustom ? 'badge--custom' : '') + '">' + esc(b) + '</span>';
-                    }).join('');
-
-                    var imagesHtml = (p.images || []).map(function (img, idx) {
-                        return '<img src="' + esc(img) + '" alt="' + esc(p.name) + ', imagen ' + (idx + 1) + ' de ' + p.images.length + '" width="1080" height="1080" decoding="async" referrerpolicy="no-referrer"' + (idx === 0 ? '' : ' loading="lazy"') + '>';
-                    }).join('');
-
-                    var dotsHtml = (p.images || []).map(function (_, idx) {
-                        return '<span class="dot ' + (idx === 0 ? 'active' : '') + '"></span>';
-                    }).join('');
-
-                    return '<article class="project-item" data-category="' + esc(p.category) + '" data-id="' + esc(p.id) + '" data-price="' + p.price + '">' +
-                        '<div class="slider' + ((p.images || []).length < 2 ? ' is-single' : '') + '" role="group" aria-roledescription="carrusel" aria-label="Imágenes de ' + esc(p.name) + '">' +
-                            '<div class="slides" tabindex="0">' + imagesHtml + '</div>' +
-                            '<button class="slider-btn prev" type="button" aria-label="Imagen anterior"><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>' +
-                            '<button class="slider-btn next" type="button" aria-label="Imagen siguiente"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
-                            '<div class="dots" aria-hidden="true">' + dotsHtml + '</div>' +
-                        '</div>' +
-                        '<div class="product-info">' +
-                            '<div class="badges">' + badgesHtml + '</div>' +
-                            '<div class="product-title">' + esc(p.name) + '</div>' +
-                            '<div class="product-price">$' + Number(p.price).toFixed(2) + ' CUP</div>' +
-                            '<button class="buy-btn" type="button"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg> Añadir a la bolsa</button>' +
-                        '</div>' +
-                    '</article>';
-                }).join('');
-
-                // Inicializar carruseles y filtros después de pintar
-                $$('.slider', grid).forEach(initSlider);
-                $$('.slides img', grid).forEach(attachImageFallback);
-                applyFilter();
+                var fresh = JSON.stringify(products);
+                if (shown && fresh === cachedRaw) return;   // nada cambió
+                try { localStorage.setItem(CATALOG_KEY, fresh); } catch (e) { /* sin almacenamiento */ }
+                renderProducts(grid, products);
             })
             .catch(function (err) {
                 console.error(err);
-                grid.innerHTML = '<p class="empty-msg">Error al cargar las plantillas.</p>';
+                if (!shown) grid.innerHTML = '<p class="empty-msg">Error al cargar las plantillas.</p>';
             });
     }
 
@@ -239,7 +276,7 @@
             return i && typeof i.id === 'string' && typeof i.name === 'string' &&
                 isFinite(i.cents) && i.cents >= 0 && i.qty >= 1;
         }).map(function (i) {
-            return { id: i.id, name: i.name, cents: Math.round(i.cents), image: typeof i.image === 'string' ? i.image : '', qty: Math.min(99, Math.floor(i.qty)) };
+            return { id: i.id, name: i.name, cents: Math.round(i.cents), image: typeof i.image === 'string' ? i.image : '', qty: 1 };
         });
     }
 
@@ -320,13 +357,17 @@
         var id = card.getAttribute('data-id') || name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
         var found = cart.filter(function (i) { return i.id === id; })[0];
-        if (found) {
-            found.qty = Math.min(99, found.qty + 1);
-        } else {
-            cart.push({ id: id, name: name, cents: Math.round(price * 100), image: img ? img.getAttribute('src') : '', qty: 1 });
-        }
-        cartChanged();
         var live = $('#cart-live');
+        if (found) {
+            // Producto digital: no se duplica, solo se avisa
+            var msg = '«' + name + '» ya está en tu bolsa.';
+            showNotice(msg);
+            if (live) live.textContent = msg;
+            openCart();
+            return;
+        }
+        cart.push({ id: id, name: name, cents: Math.round(price * 100), image: img ? img.getAttribute('src') : '', qty: 1 });
+        cartChanged();
         if (live) live.textContent = name + ' añadida a la bolsa.';
         openCart();
     }
@@ -349,11 +390,6 @@
             var action = btn.getAttribute('data-action');
             if (action === 'remove') {
                 cart = cart.filter(function (i) { return i !== item; });
-            } else if (action === 'inc') {
-                item.qty = Math.min(99, item.qty + 1);
-            } else if (action === 'dec') {
-                item.qty -= 1;
-                if (item.qty <= 0) cart = cart.filter(function (i) { return i !== item; });
             }
             cartChanged();
         });
@@ -371,7 +407,7 @@
             '',
             'Plantillas:'
         ];
-        o.items.forEach(function (i) { lines.push('- ' + i.qty + ' x ' + i.name + ' (' + fmt(i.cents * i.qty) + ')'); });
+        o.items.forEach(function (i) { lines.push('- ' + i.name + ' (' + fmt(i.cents) + ')'); });
         var body = lines.join('\n');
         return {
             subject: subject,
@@ -380,8 +416,35 @@
         };
     }
 
+    /* Aviso dentro de la bolsa y estado de los botones de cada producto */
+    var noticeTimer = null;
+    function showNotice(msg) {
+        var n = $('#cart-notice');
+        if (!n) return;
+        n.textContent = msg;
+        n.hidden = false;
+        clearTimeout(noticeTimer);
+        noticeTimer = setTimeout(function () { n.hidden = true; }, 4500);
+    }
+
+    var BTN_ADD = '<svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg> Añadir a la bolsa';
+    var BTN_IN = '<svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Ya está en tu bolsa';
+    function syncBuyButtons() {
+        var ids = cart.map(function (i) { return i.id; });
+        $$('.project-item').forEach(function (card) {
+            var btn = $('.buy-btn', card);
+            if (!btn) return;
+            var inBag = ids.indexOf(card.getAttribute('data-id')) > -1;
+            if (btn.classList.contains('in-bag') === inBag && btn.innerHTML) return;
+            btn.classList.toggle('in-bag', inBag);
+            btn.innerHTML = inBag ? BTN_IN : BTN_ADD;
+        });
+    }
+    document.addEventListener('products:rendered', syncBuyButtons);
+
     function render() {
-        var count = cart.reduce(function (sum, i) { return sum + i.qty; }, 0);
+        syncBuyButtons();
+        var count = cart.length;
         var countEl = $('#cart-count');
         var countLabel = $('#cart-count-label');
         if (countEl) countEl.textContent = count;
@@ -414,11 +477,6 @@
                         '<div class="cart-line-info">' +
                             '<div class="cart-line-name">' + esc(i.name) + '</div>' +
                             '<div class="cart-line-row">' +
-                                '<div class="qty">' +
-                                    '<button type="button" data-action="dec" data-id="' + esc(i.id) + '" aria-label="Quitar una unidad de ' + esc(i.name) + '">-</button>' +
-                                    '<span>' + i.qty + '</span>' +
-                                    '<button type="button" data-action="inc" data-id="' + esc(i.id) + '" aria-label="Añadir una unidad de ' + esc(i.name) + '">+</button>' +
-                                '</div>' +
                                 '<span class="cart-line-price">' + fmt(i.cents * i.qty) + '</span>' +
                             '</div>' +
                         '</div>' +
@@ -450,7 +508,7 @@
             if (payPho) payPho.textContent = STORE.phone;
             if (payIts) {
                 payIts.innerHTML = order.items.map(function (i) {
-                    return '<li><span>' + i.qty + ' x ' + esc(i.name) + '</span><span>' + fmt(i.cents * i.qty) + '</span></li>';
+                    return '<li><span>' + esc(i.name) + '</span><span>' + fmt(i.cents * i.qty) + '</span></li>';
                 }).join('');
             }
             if (opNum && !opNum.value) opNum.value = order.operation || '';
@@ -592,3 +650,4 @@
 
     render();
 })();
+
