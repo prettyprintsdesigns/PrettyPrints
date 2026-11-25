@@ -1463,3 +1463,62 @@ dialog.legal::backdrop {
         scroll-snap-align: center;
     }
 }
+
+
+/* =====================================================================
+   Productos en DOS columnas (imágenes 1080x1080, relación 1:1)
+   ===================================================================== */
+.project-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
+    gap: 20px;
+    max-width: 900px;
+}
+
+/* Carga más ligera: las tarjetas fuera de pantalla no se pintan hasta que se acercan */
+.project-item {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 480px;
+}
+
+/* Marcador de posición mientras llega el catálogo */
+.project-item.skeleton {
+    min-height: 300px;
+    background: linear-gradient(100deg, var(--blue-soft) 30%, var(--white) 50%, var(--blue-soft) 70%);
+    background-size: 200% 100%;
+    animation: pp-shimmer 1.4s linear infinite;
+}
+@keyframes pp-shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .project-item.skeleton { animation: none; } }
+
+@media (max-width: 600px) {
+    .project-grid { gap: 12px; }
+    .project-item { border-radius: 14px; }
+    .project-item .product-info { padding: 10px; }
+    .project-item .badge { font-size: 0.62rem; padding: 2px 7px; }
+    .project-item .badges { margin-bottom: 6px; gap: 4px; }
+    .project-item .product-title { font-size: 0.88rem; min-height: 2.6em; margin-bottom: 4px; }
+    .project-item .product-price { font-size: 1rem; margin-bottom: 8px; }
+    .project-item .buy-btn { font-size: 0.78rem; padding: 8px 6px; gap: 5px; }
+    .project-item .slider-btn { width: 28px; height: 28px; }
+    .project-item .slider-btn.prev { left: 5px; }
+    .project-item .slider-btn.next { right: 5px; }
+}
+
+/* Botón cuando el producto ya está en la bolsa */
+.buy-btn.in-bag { background-color: var(--pink-light); }
+
+/* Aviso dentro de la bolsa */
+.cart-notice {
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--pink-light);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+.cart-notice[hidden] { display: none; }
+
+/* Sin selector de cantidad: el precio queda a la izquierda */
+.cart-line-row { justify-content: flex-start; }
+
